@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import scipy.stats as stats
+from statsmodels.stats.proportion import proportions_ztest
 
 chat_id = 326525586 # Ваш chat ID, не меняйте название переменной
 
@@ -11,15 +11,9 @@ def solution(x_success: int,
     # Измените код этой функции
     # Это будет вашим решением
     # Не меняйте название функции и её аргументы
-    p1 = x_success / x_cnt
-    p2 = y_success / y_cnt
-
-    p_pool = (x_success + y_success) / (x_cnt + y_cnt)
-    std_err = np.sqrt(p_pool * (1 - p_pool) * (1 / x_cnt + 1 / y_cnt))
-
-    z_stat = (p1 - p2) / std_err
-
-    # Двусторонний тест
+    counts = np.array([x_success, y_success])
+    nobs = np.array([x_cnt, y_cnt])
+    
+    z_stat, p_value = proportions_ztest(counts, nobs)
     alpha = 0.06
-    z_critical = stats.norm.ppf(1 - alpha / 2)
-    return abs(z_stat) > z_critical # Ваш ответ, True или False
+    return p_value < alpha # Ваш ответ, True или False
